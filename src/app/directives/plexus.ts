@@ -111,7 +111,7 @@ export class Plexus {
           if (distSq >= reachSq) {
             continue;
           }
-          const alpha = (1 - Math.sqrt(distSq) / reach) * 0.55;
+          const alpha = (1 - Math.sqrt(distSq) / reach) * 0.36;
           context.strokeStyle = `rgba(94, 234, 212, ${alpha})`;
           context.beginPath();
           context.moveTo(a.x, a.y);
@@ -136,7 +136,7 @@ export class Plexus {
       }
 
       for (const node of nodes) {
-        context.fillStyle = node.gold ? 'rgba(231, 194, 122, 0.9)' : 'rgba(94, 234, 212, 0.85)';
+        context.fillStyle = node.gold ? 'rgba(231, 194, 122, 0.62)' : 'rgba(94, 234, 212, 0.58)';
         context.beginPath();
         context.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
         context.fill();

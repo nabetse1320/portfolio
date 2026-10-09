@@ -199,16 +199,11 @@ ol {
 }
 
 .mark {
-  display: grid;
-  width: 36px;
-  height: 36px;
-  place-items: center;
-  border: 1px solid rgba(94, 234, 212, 0.5);
+  display: block;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  color: var(--teal);
-  font-family: var(--serif);
-  font-size: 0.84rem;
-  font-weight: 560;
+  object-fit: cover;
 }
 
 .nav-links {
@@ -486,17 +481,21 @@ h1 .line {
     var(--shadow);
 }
 
+.portrait-shift {
+  position: absolute;
+  inset: -14px;
+  animation: portrait-float 7s ease-in-out infinite;
+  will-change: transform;
+}
+
 .portrait-frame img {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: calc(100% + 28px);
-  height: calc(100% + 28px);
+  inset: 0;
+  width: 100%;
+  height: 100%;
   max-width: none;
   object-fit: cover;
   object-position: center;
-  transform: translate(-50%, -50%);
-  animation: portrait-float 7s ease-in-out infinite;
 }
 
 .stage-chips {
@@ -1019,11 +1018,11 @@ h2 {
 @keyframes portrait-float {
   0%,
   100% {
-    transform: translate(-50%, calc(-50% + 4px));
+    transform: translate3d(0, 4px, 0);
   }
 
   50% {
-    transform: translate(-50%, calc(-50% - 4px));
+    transform: translate3d(0, -4px, 0);
   }
 }
 
@@ -1120,7 +1119,7 @@ h2 {
     animation: none;
   }
 
-  .portrait-frame img {
+  .portrait-shift {
     animation: none;
   }
 
@@ -1162,7 +1161,7 @@ h2 {
   .orbit-b,
   .status-dot,
   .float-chip,
-  .portrait-frame img {
+  .portrait-shift {
     animation: none;
   }
 

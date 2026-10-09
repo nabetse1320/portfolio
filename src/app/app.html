@@ -8,7 +8,7 @@
 
 <header class="nav" [class.is-scrolled]="scrolled()" [class.is-open]="menuOpen()">
   <a class="brand" href="#inicio" (click)="closeMenu()">
-    <span class="mark" aria-hidden="true">EG</span>
+    <img class="mark" src="favicon.png" alt="" width="40" height="40" />
     <span>Esteban Guevara</span>
   </a>
 
@@ -90,12 +90,14 @@
           <div class="orbit" aria-hidden="true"></div>
           <div class="orbit orbit-b" aria-hidden="true"></div>
           <figure class="portrait-frame">
-            <img
-              [src]="profile.portrait"
-              width="800"
-              height="800"
-              alt="Retrato de Esteban Josué Guevara Hernández"
-            />
+            <div class="portrait-shift">
+              <img
+                [src]="profile.portrait"
+                width="800"
+                height="800"
+                alt="Retrato de Esteban Josué Guevara Hernández"
+              />
+            </div>
           </figure>
           <div class="stage-chips">
             <span class="float-chip chip-a">Kotlin</span>
