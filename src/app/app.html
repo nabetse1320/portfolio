@@ -1,0 +1,323 @@
+<div class="progress" [style.transform]="'scaleX(' + progress() + ')'" aria-hidden="true"></div>
+<div class="top-fade" [class.is-on]="scrolled()" aria-hidden="true"></div>
+@if (menuOpen()) {
+  <button type="button" class="scrim" (click)="closeMenu()" aria-label="Cerrar menú"></button>
+}
+
+<a class="skip" href="#contenido">Saltar al contenido</a>
+
+<header class="nav" [class.is-scrolled]="scrolled()" [class.is-open]="menuOpen()">
+  <a class="brand" href="#inicio" (click)="closeMenu()">
+    <span class="mark" aria-hidden="true">EG</span>
+    <span>Esteban Guevara</span>
+  </a>
+
+  <nav class="nav-links" aria-label="Secciones">
+    @for (item of navigation; track item.id) {
+      <a
+        [href]="'#' + item.id"
+        [class.is-active]="active() === item.id"
+        [attr.aria-current]="active() === item.id ? 'location' : null"
+        (click)="closeMenu()"
+      >
+        {{ item.label }}
+      </a>
+    }
+  </nav>
+
+  <div class="nav-end">
+    <p class="status">
+      <span class="status-dot" aria-hidden="true"></span>
+      Abierto a roles
+    </p>
+    <button
+      type="button"
+      class="menu-btn"
+      (click)="toggleMenu()"
+      [attr.aria-expanded]="menuOpen()"
+      [attr.aria-label]="menuOpen() ? 'Cerrar menú' : 'Abrir menú'"
+    >
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</header>
+
+<main id="contenido">
+  <section id="inicio" class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow rise d1">{{ profile.role }} · {{ profile.placeShort }}</p>
+        <h1 class="rise d2">
+          <span class="line">{{ profile.given }}</span>
+          <span class="line">{{ profile.family }}<span class="dot">.</span></span>
+        </h1>
+        <p class="role-line rise d3">{{ profile.focus }}</p>
+        <p class="lead rise d3">{{ profile.lead }}</p>
+        <div class="actions rise d4">
+          <a class="btn btn-primary" href="#contacto">
+            Escríbeme
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M5 12h14M13 6l6 6-6 6"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </a>
+          <a class="btn btn-ghost" href="#trabajo">Ver trabajo</a>
+          <a class="btn btn-ghost" [href]="profile.github" target="_blank" rel="noopener noreferrer">
+            GitHub
+          </a>
+        </div>
+        <ul class="hero-meta rise d5">
+          <li>
+            <a [href]="profile.emailHref">{{ profile.email }}</a>
+          </li>
+          <li>
+            <a [href]="profile.phoneHref">{{ profile.phone }}</a>
+          </li>
+          <li>{{ profile.interest }}</li>
+        </ul>
+      </div>
+
+      <div class="hero-visual rise d4">
+        <div class="stage">
+          <div class="orbit" aria-hidden="true"></div>
+          <div class="orbit orbit-b" aria-hidden="true"></div>
+          <figure class="portrait-frame">
+            <img
+              [src]="profile.portrait"
+              width="384"
+              height="384"
+              alt="Retrato de Esteban Josué Guevara Hernández"
+            />
+          </figure>
+          <div class="stage-chips">
+            <span class="float-chip chip-a">Kotlin</span>
+            <span class="float-chip chip-b">Laravel</span>
+            <span class="float-chip chip-c">Flutter</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      @for (item of marqueeLoop; track $index) {
+        <span>{{ item }}</span>
+      }
+    </div>
+  </div>
+
+  <section id="perfil" class="section">
+    <div class="wrap">
+      <header class="section-head" appReveal>
+        <span class="index">01</span>
+        <h2>Perfil</h2>
+      </header>
+      <div class="about-grid">
+        <p class="summary" appReveal data-delay="1">{{ profile.summary }}</p>
+        <ul class="fact-grid">
+          @for (fact of profile.facts; track fact.label; let i = $index) {
+            <li class="fact" appReveal [attr.data-delay]="i">
+              <span class="fact-label">{{ fact.label }}</span>
+              <span class="fact-value">{{ fact.value }}</span>
+            </li>
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="experiencia" class="section">
+    <div class="wrap">
+      <header class="section-head" appReveal>
+        <span class="index">02</span>
+        <h2>Experiencia</h2>
+        <p class="lede">Producto, audiovisual y videojuegos. Del desarrollo al despliegue.</p>
+      </header>
+      <ol class="jobs">
+        @for (role of profile.roles; track role.id; let i = $index) {
+          <li class="job" appReveal [attr.data-delay]="i">
+            <p class="when">{{ role.period }}</p>
+            <article class="job-body">
+              <h3>
+                {{ role.title }}
+                @if (role.current) {
+                  <span class="current">Actual</span>
+                }
+              </h3>
+              <p class="org">{{ role.org }}</p>
+              <ul class="points">
+                @for (point of role.points; track point) {
+                  <li>{{ point }}</li>
+                }
+              </ul>
+              <ul class="tags" aria-label="Tecnologías">
+                @for (tag of role.tags; track tag) {
+                  <li>{{ tag }}</li>
+                }
+              </ul>
+            </article>
+          </li>
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section id="trabajo" class="section">
+    <div class="wrap">
+      <header class="section-head" appReveal>
+        <span class="index">03</span>
+        <h2>Trabajo seleccionado</h2>
+        <p class="lede">Productos y juegos en los que programé, diseñé o recorrí el ciclo completo.</p>
+      </header>
+      <div class="bento">
+        @for (project of profile.projects; track project.id; let i = $index) {
+          <article
+            class="project tone-{{ project.tone }}"
+            [class.featured]="project.featured"
+            appReveal
+            appSpotlight
+            [attr.data-delay]="i % 3"
+          >
+            <div class="project-top">
+              <p class="kicker">{{ project.kicker }}</p>
+              <p class="when">{{ project.period }}</p>
+            </div>
+            @if (project.badge) {
+              <p class="badge">{{ project.badge }}</p>
+            }
+            <h3>{{ project.name }}</h3>
+            <p>{{ project.summary }}</p>
+            @if (project.points.length) {
+              <ul class="points">
+                @for (point of project.points; track point) {
+                  <li>{{ point }}</li>
+                }
+              </ul>
+            }
+            <div class="project-foot">
+              <ul class="tags">
+                @for (tag of project.tags; track tag) {
+                  <li>{{ tag }}</li>
+                }
+              </ul>
+              @if (project.href) {
+                <a
+                  class="project-link"
+                  [href]="project.href"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {{ project.linkLabel }}
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                      d="M7 17 17 7M9 7h8v8"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </a>
+              }
+            </div>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section id="habilidades" class="section">
+    <div class="wrap">
+      <header class="section-head" appReveal>
+        <span class="index">04</span>
+        <h2>Habilidades</h2>
+        <p class="lede">Herramientas con las que construyo producto, juego y pieza.</p>
+      </header>
+      <div class="skill-board">
+        @for (group of profile.skills; track group.id; let i = $index) {
+          <article class="skill-card" appReveal [attr.data-delay]="i">
+            <h3>{{ group.title }}</h3>
+            <ul class="skill-list">
+              @for (item of group.items; track item) {
+                <li>{{ item }}</li>
+              }
+            </ul>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section id="formacion" class="section">
+    <div class="wrap">
+      <header class="section-head" appReveal>
+        <span class="index">05</span>
+        <h2>Formación</h2>
+      </header>
+      <div class="edu-grid">
+        @for (item of profile.education; track item.id; let i = $index) {
+          <article class="edu-card" appReveal [attr.data-delay]="i">
+            <p class="edu-period">{{ item.period }}</p>
+            <h3>{{ item.title }}</h3>
+            <p>{{ item.school }}</p>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section id="contacto" class="section">
+    <div class="wrap">
+      <div class="contact-panel" appReveal appSpotlight>
+        <header class="section-head">
+          <span class="index">06</span>
+          <h2>Medellín, Rionegro<br />o remoto.</h2>
+        </header>
+        <p class="lede">
+          Interés en roles de desarrollo móvil y web. Referencias disponibles a solicitud.
+        </p>
+        <a class="email-link" [href]="profile.emailHref">
+          <span>{{ emailParts[0] }}</span><span>@{{ emailParts[1] }}</span>
+        </a>
+        <ul class="contact-list">
+          <li>
+            <span>Teléfono</span>
+            <a [href]="profile.phoneHref">{{ profile.phone }}</a>
+          </li>
+          <li>
+            <span>LinkedIn</span>
+            <a [href]="profile.linkedin" target="_blank" rel="noopener noreferrer">
+              {{ profile.linkedinLabel }}
+            </a>
+          </li>
+          <li>
+            <span>GitHub</span>
+            <a [href]="profile.github" target="_blank" rel="noopener noreferrer">
+              {{ profile.githubLabel }}
+            </a>
+          </li>
+          <li>
+            <span>Ubicación</span>
+            <p>{{ profile.location }}</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-row">
+    <p>© {{ year }} {{ profile.name }}</p>
+    <p>{{ profile.role }} · {{ profile.placeShort }}</p>
+  </div>
+</footer>
