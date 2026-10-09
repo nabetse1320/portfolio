@@ -1,11 +1,12 @@
 import { afterNextRender, Component, DestroyRef, inject, signal } from '@angular/core';
 import { navigation, profile } from './data/profile';
+import { Plexus } from './directives/plexus';
 import { Reveal } from './directives/reveal';
 import { Spotlight } from './directives/spotlight';
 
 @Component({
   selector: 'app-root',
-  imports: [Reveal, Spotlight],
+  imports: [Plexus, Reveal, Spotlight],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
@@ -13,7 +14,6 @@ export class App {
   protected readonly profile = profile;
   protected readonly navigation = navigation;
   protected readonly year = new Date().getFullYear();
-  protected readonly marqueeLoop = [...profile.marquee, ...profile.marquee];
   protected readonly emailParts = profile.email.split('@');
   protected readonly menuOpen = signal(false);
   protected readonly scrolled = signal(false);

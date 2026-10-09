@@ -295,7 +295,19 @@ ol {
   position: relative;
 }
 
+.plexus {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 78%, transparent 100%);
+}
+
 .hero-grid {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
   gap: 40px;
@@ -475,10 +487,15 @@ h1 .line {
 }
 
 .portrait-frame img {
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(100% + 28px);
+  height: calc(100% + 28px);
+  max-width: none;
   object-fit: cover;
-  transform: scale(1.16);
+  object-position: center;
+  transform: translate(-50%, -50%);
   animation: portrait-float 7s ease-in-out infinite;
 }
 
@@ -517,37 +534,6 @@ h1 .line {
   bottom: 78px;
   left: 34px;
   animation-delay: -3s;
-}
-
-.marquee {
-  overflow: hidden;
-  border-block: 1px solid var(--line);
-  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-}
-
-.marquee-track {
-  display: flex;
-  width: max-content;
-  animation: ticker 38s linear infinite;
-}
-
-.marquee:hover .marquee-track {
-  animation-play-state: paused;
-}
-
-.marquee span {
-  padding: 16px 0 16px 28px;
-  color: var(--muted);
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.marquee span::before {
-  content: '✦';
-  margin-right: 28px;
-  color: var(--teal);
 }
 
 .section {
@@ -1031,17 +1017,13 @@ h2 {
 }
 
 @keyframes portrait-float {
-  50% {
-    transform: translateY(-8px) scale(1.16);
+  0%,
+  100% {
+    transform: translate(-50%, calc(-50% + 4px));
   }
-}
 
-@keyframes ticker {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
+  50% {
+    transform: translate(-50%, calc(-50% - 4px));
   }
 }
 
@@ -1178,7 +1160,6 @@ h2 {
   .rise,
   .orbit,
   .orbit-b,
-  .marquee-track,
   .status-dot,
   .float-chip,
   .portrait-frame img {
@@ -1203,7 +1184,7 @@ h2 {
   .progress,
   .top-fade,
   .scrim,
-  .marquee,
+  .plexus,
   .orbit,
   .stage-chips,
   body::before {

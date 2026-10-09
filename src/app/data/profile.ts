@@ -71,23 +71,10 @@ export const profile = {
   lead: 'Aplicaciones Android con Kotlin y Jetpack Compose, backends con Laravel y productos multiplataforma con Flutter.',
   summary:
     'Ingeniero Multimedia con enfoque en desarrollo móvil y web. Experiencia práctica construyendo aplicaciones Android con Kotlin y Jetpack Compose, backends con Laravel/PHP y soluciones multiplataforma con Flutter. Interés en roles de desarrollo móvil/web en Medellín, Rionegro o remoto en Colombia. Combina sólida base técnica con criterio de diseño y experiencia en proyectos de videojuegos reconocidos a nivel nacional.',
-  marquee: [
-    'Kotlin',
-    'Jetpack Compose',
-    'Flutter',
-    'Dart',
-    'Laravel',
-    'PHP',
-    'SQL',
-    'Unity',
-    'C#',
-    'Blender',
-    'DaVinci Resolve',
-  ],
   facts: [
     { label: 'Enfoque', value: 'Móvil y web' },
     { label: 'Formación', value: 'Ing. Multimedia' },
-    { label: 'Base', value: 'Valle de Aburrá' },
+    { label: 'Base', value: 'Rionegro' },
     { label: 'Juegos', value: 'Convocatoria nacional' },
   ],
   roles: [

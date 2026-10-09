@@ -45,6 +45,7 @@
 
 <main id="contenido">
   <section id="inicio" class="hero">
+    <canvas class="plexus" appPlexus aria-hidden="true"></canvas>
     <div class="wrap hero-grid">
       <div class="hero-copy">
         <p class="eyebrow rise d1">{{ profile.role }} · {{ profile.placeShort }}</p>
@@ -91,8 +92,8 @@
           <figure class="portrait-frame">
             <img
               [src]="profile.portrait"
-              width="384"
-              height="384"
+              width="800"
+              height="800"
               alt="Retrato de Esteban Josué Guevara Hernández"
             />
           </figure>
@@ -105,14 +106,6 @@
       </div>
     </div>
   </section>
-
-  <div class="marquee" aria-hidden="true">
-    <div class="marquee-track">
-      @for (item of marqueeLoop; track $index) {
-        <span>{{ item }}</span>
-      }
-    </div>
-  </div>
 
   <section id="perfil" class="section">
     <div class="wrap">
