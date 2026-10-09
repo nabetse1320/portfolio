@@ -40,6 +40,9 @@ export class Plexus {
     let visible = true;
     let lastTime = 0;
     const pointer = { x: -9999, y: -9999, active: false };
+    let touchPointerId: number | null = null;
+    let lastClientX = 0;
+    let lastClientY = 0;
 
     const resize = (): void => {
       const nextWidth = host.clientWidth;
@@ -160,15 +163,74 @@ export class Plexus {
       cancelAnimationFrame(frame);
     };
 
-    const onPointerMove = (event: PointerEvent): void => {
+    const updateFromClient = (clientX: number, clientY: number): void => {
       const rect = canvas.getBoundingClientRect();
-      pointer.x = event.clientX - rect.left;
-      pointer.y = event.clientY - rect.top;
+      pointer.x = clientX - rect.left;
+      pointer.y = clientY - rect.top;
+    };
+
+    const onMouseMove = (event: PointerEvent): void => {
+      if (event.pointerType !== 'mouse') {
+        return;
+      }
+      updateFromClient(event.clientX, event.clientY);
       pointer.active = true;
     };
 
-    const onPointerLeave = (): void => {
+    const onMouseLeave = (event: PointerEvent): void => {
+      if (event.pointerType !== 'mouse') {
+        return;
+      }
       pointer.active = false;
+    };
+
+    const onTouchDown = (event: PointerEvent): void => {
+      if (event.pointerType === 'mouse') {
+        return;
+      }
+      touchPointerId = event.pointerId;
+      lastClientX = event.clientX;
+      lastClientY = event.clientY;
+      pointer.active = true;
+      updateFromClient(lastClientX, lastClientY);
+    };
+
+    const onTouchMove = (event: PointerEvent): void => {
+      if (touchPointerId === null || event.pointerId !== touchPointerId) {
+        return;
+      }
+      lastClientX = event.clientX;
+      lastClientY = event.clientY;
+      pointer.active = true;
+      updateFromClient(lastClientX, lastClientY);
+    };
+
+    const onTouchEnd = (event: PointerEvent): void => {
+      if (event.pointerId !== touchPointerId) {
+        return;
+      }
+      // The browser cancels the pointer when a touch becomes a scroll, while the
+      // finger is still on the screen. That touchend does not bubble, so the
+      // listener below only sees the real lift.
+      if (event.type === 'pointercancel') {
+        return;
+      }
+      touchPointerId = null;
+      pointer.active = false;
+    };
+
+    const onTouchListEnd = (event: TouchEvent): void => {
+      if (event.touches.length === 0) {
+        touchPointerId = null;
+        pointer.active = false;
+      }
+    };
+
+    const onScroll = (): void => {
+      if (touchPointerId === null) {
+        return;
+      }
+      updateFromClient(lastClientX, lastClientY);
     };
 
     const onVisibility = (): void => {
@@ -182,8 +244,14 @@ export class Plexus {
     resize();
     draw(0);
 
-    host.addEventListener('pointermove', onPointerMove);
-    host.addEventListener('pointerleave', onPointerLeave);
+    host.addEventListener('pointermove', onMouseMove);
+    host.addEventListener('pointerleave', onMouseLeave);
+    window.addEventListener('pointerdown', onTouchDown);
+    window.addEventListener('pointermove', onTouchMove);
+    window.addEventListener('pointerup', onTouchEnd);
+    window.addEventListener('pointercancel', onTouchEnd);
+    window.addEventListener('touchend', onTouchListEnd);
+    window.addEventListener('scroll', onScroll, { passive: true });
     document.addEventListener('visibilitychange', onVisibility);
 
     let observer: ResizeObserver | undefined;
@@ -211,8 +279,14 @@ export class Plexus {
       stopLoop();
       observer?.disconnect();
       intersection?.disconnect();
-      host.removeEventListener('pointermove', onPointerMove);
-      host.removeEventListener('pointerleave', onPointerLeave);
+      host.removeEventListener('pointermove', onMouseMove);
+      host.removeEventListener('pointerleave', onMouseLeave);
+      window.removeEventListener('pointerdown', onTouchDown);
+      window.removeEventListener('pointermove', onTouchMove);
+      window.removeEventListener('pointerup', onTouchEnd);
+      window.removeEventListener('pointercancel', onTouchEnd);
+      window.removeEventListener('touchend', onTouchListEnd);
+      window.removeEventListener('scroll', onScroll);
       document.removeEventListener('visibilitychange', onVisibility);
     });
   }
