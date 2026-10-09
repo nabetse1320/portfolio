@@ -76,6 +76,11 @@ export class Plexus {
     };
 
     const draw = (dt: number): void => {
+      // The page scroll moves this canvas. Re-read the finger each frame so the
+      // anchor stays on the screen point being pressed while the nodes scroll past.
+      if (touchPointerId !== null) {
+        updateFromClient(lastClientX, lastClientY);
+      }
       context.clearRect(0, 0, width, height);
       if (!reduce) {
         for (const node of nodes) {
@@ -184,25 +189,58 @@ export class Plexus {
       pointer.active = false;
     };
 
+    const rememberFinger = (clientX: number, clientY: number): void => {
+      lastClientX = clientX;
+      lastClientY = clientY;
+      pointer.active = true;
+      updateFromClient(clientX, clientY);
+      if (reduce) {
+        draw(0);
+      }
+    };
+
     const onTouchDown = (event: PointerEvent): void => {
       if (event.pointerType === 'mouse') {
         return;
       }
       touchPointerId = event.pointerId;
-      lastClientX = event.clientX;
-      lastClientY = event.clientY;
-      pointer.active = true;
-      updateFromClient(lastClientX, lastClientY);
+      rememberFinger(event.clientX, event.clientY);
     };
 
     const onTouchMove = (event: PointerEvent): void => {
       if (touchPointerId === null || event.pointerId !== touchPointerId) {
         return;
       }
-      lastClientX = event.clientX;
-      lastClientY = event.clientY;
-      pointer.active = true;
-      updateFromClient(lastClientX, lastClientY);
+      rememberFinger(event.clientX, event.clientY);
+    };
+
+    // After a scroll starts, Chrome stops pointermove but keeps sending the real
+    // finger position on pointerrawupdate and touchmove.
+    const onPointerRaw = (event: Event): void => {
+      if (!(event instanceof PointerEvent)) {
+        return;
+      }
+      if (event.pointerType === 'mouse' || event.pointerId !== touchPointerId) {
+        return;
+      }
+      rememberFinger(event.clientX, event.clientY);
+    };
+
+    const onTouchMoveTrack = (event: TouchEvent): void => {
+      if (touchPointerId === null || event.touches.length === 0) {
+        return;
+      }
+      let touch: Touch | undefined;
+      for (let i = 0; i < event.touches.length; i++) {
+        if (event.touches[i].identifier === touchPointerId) {
+          touch = event.touches[i];
+          break;
+        }
+      }
+      if (!touch) {
+        touch = event.touches[0];
+      }
+      rememberFinger(touch.clientX, touch.clientY);
     };
 
     const onTouchEnd = (event: PointerEvent): void => {
@@ -231,6 +269,9 @@ export class Plexus {
         return;
       }
       updateFromClient(lastClientX, lastClientY);
+      if (reduce) {
+        draw(0);
+      }
     };
 
     const onVisibility = (): void => {
@@ -248,8 +289,10 @@ export class Plexus {
     host.addEventListener('pointerleave', onMouseLeave);
     window.addEventListener('pointerdown', onTouchDown);
     window.addEventListener('pointermove', onTouchMove);
+    window.addEventListener('pointerrawupdate', onPointerRaw);
     window.addEventListener('pointerup', onTouchEnd);
     window.addEventListener('pointercancel', onTouchEnd);
+    window.addEventListener('touchmove', onTouchMoveTrack, { passive: true });
     window.addEventListener('touchend', onTouchListEnd);
     window.addEventListener('scroll', onScroll, { passive: true });
     document.addEventListener('visibilitychange', onVisibility);
@@ -283,8 +326,10 @@ export class Plexus {
       host.removeEventListener('pointerleave', onMouseLeave);
       window.removeEventListener('pointerdown', onTouchDown);
       window.removeEventListener('pointermove', onTouchMove);
+      window.removeEventListener('pointerrawupdate', onPointerRaw);
       window.removeEventListener('pointerup', onTouchEnd);
       window.removeEventListener('pointercancel', onTouchEnd);
+      window.removeEventListener('touchmove', onTouchMoveTrack);
       window.removeEventListener('touchend', onTouchListEnd);
       window.removeEventListener('scroll', onScroll);
       document.removeEventListener('visibilitychange', onVisibility);
