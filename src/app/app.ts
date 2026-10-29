@@ -19,6 +19,20 @@ export class App {
   protected readonly profile = profile;
   protected readonly year = new Date().getFullYear();
   protected readonly emailParts = profile.email.split('@');
+  /**
+   * Columnas de vidrio del retrato: posición (l) y ancho (w) en % del contenedor,
+   * alto (h) en %, desplazamiento de la refracción (s) en % del ancho y orden
+   * de apilado (z): las del centro quedan delante.
+   */
+  protected readonly slices = [
+    { l: 0, w: 9, h: 58, s: -22, z: 1 },
+    { l: 9, w: 10, h: 70, s: -15, z: 2 },
+    { l: 19, w: 11, h: 82, s: -8, z: 3 },
+    { l: 30, w: 40, h: 94, s: 0, z: 4 },
+    { l: 70, w: 11, h: 82, s: 8, z: 3 },
+    { l: 81, w: 10, h: 70, s: 15, z: 2 },
+    { l: 91, w: 9, h: 58, s: 22, z: 1 },
+  ];
   protected readonly menuOpen = signal(false);
   protected readonly scrolled = signal(false);
   protected readonly active = signal('inicio');
@@ -92,6 +106,35 @@ export class App {
     this.gallery.set({ title: item.title, items: item.gallery, index: 0, href: item.href });
   }
 
+  /**
+   * Suma media vuelta a una columna del retrato, en el sentido en que se mueve
+   * el cursor. Si ya estaba girando, la transición continúa desde el ángulo
+   * actual, así que ningún hover se pierde.
+   */
+  protected spinSlice(event: PointerEvent): void {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+    const slice = event.currentTarget as HTMLElement;
+    const direction = event.movementX < 0 ? -1 : 1;
+    const turns = Number(slice.dataset['turns'] ?? 0) + direction;
+    slice.dataset['turns'] = String(turns);
+    slice.style.setProperty('--spin', `${turns * 180}deg`);
+  }
+
+  /** Mientras gira, la columna pasa por delante de sus vecinas. */
+  protected onSpinStart(event: TransitionEvent): void {
+    if (event.propertyName === '--spin') {
+      (event.currentTarget as HTMLElement).classList.add('is-spinning');
+    }
+  }
+
+  protected onSpinEnd(event: TransitionEvent): void {
+    if (event.propertyName === '--spin' && event.target === event.currentTarget) {
+      (event.currentTarget as HTMLElement).classList.remove('is-spinning');
+    }
+  }
+
   protected async copyEmail(): Promise<void> {
     try {
       await navigator.clipboard.writeText(profile.email);
@@ -114,6 +157,10 @@ export class App {
 
     const max = document.documentElement.scrollHeight - window.innerHeight;
     this.progress.set(max > 0 ? Math.min(window.scrollY / max, 1) : 0);
+
+    // Los nodos del fondo se atenúan al dejar la portada, para no competir con el texto.
+    const dim = Math.min(window.scrollY / window.innerHeight, 1);
+    document.documentElement.style.setProperty('--nodes-opacity', (1 - dim * 0.45).toFixed(3));
 
     const line = window.innerHeight * 0.32;
     const ids = this.sectionIds();

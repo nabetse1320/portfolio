@@ -18,23 +18,19 @@
   </a>
 
   <nav class="nav-links" [attr.aria-label]="c().ui.sections">
-    @for (item of c().nav; track item.id) {
+    @for (item of c().nav; track item.id; let n = $index) {
       <a
         [href]="'#' + item.id"
         [class.is-active]="active() === item.id"
         [attr.aria-current]="active() === item.id ? 'location' : null"
         (click)="closeMenu()"
       >
-        {{ item.label }}
+        <span class="nav-num" aria-hidden="true">0{{ n + 1 }}</span>{{ item.label }}
       </a>
     }
   </nav>
 
   <div class="nav-end">
-    <p class="status">
-      <span class="status-dot" aria-hidden="true"></span>
-      {{ c().ui.status }}
-    </p>
     <button
       type="button"
       class="pill-btn"
@@ -86,9 +82,12 @@
   </div>
 </header>
 
+<div class="plexus-layer" aria-hidden="true">
+  <canvas class="plexus" appPlexus></canvas>
+</div>
+
 <main id="contenido">
   <section id="inicio" class="hero">
-    <canvas class="plexus" appPlexus aria-hidden="true"></canvas>
     <div class="wrap hero-grid">
       <div class="hero-copy">
         <div class="hero-id rise d1">
@@ -103,10 +102,12 @@
         </div>
         <h1 class="rise d2">
           <span class="line">{{ profile.given }}</span>
-          <span class="line">{{ profile.family }}<span class="dot">.</span></span>
+          <span class="line line-alt">{{ profile.family }}<span class="dot">.</span></span>
         </h1>
-        <p class="role-line rise d3">{{ c().hero.focus }}</p>
-        <p class="lead rise d3">{{ c().hero.lead }}</p>
+        <div class="hero-sub rise d3">
+          <p class="role-line">{{ c().hero.focus }}</p>
+          <p class="lead">{{ c().hero.lead }}</p>
+        </div>
         <div class="actions rise d4">
           <a class="btn btn-primary" href="#contacto">
             {{ c().ui.write }}
@@ -148,20 +149,40 @@
       </div>
 
       <div class="hero-visual rise d4">
-        <div class="stage">
-          <div class="orbit" aria-hidden="true"></div>
-          <div class="orbit orbit-b" aria-hidden="true"></div>
-          <figure class="portrait-frame">
-            <div class="portrait-shift">
-              <img [src]="profile.portrait" width="800" height="800" [alt]="c().ui.portraitAlt" />
-            </div>
-          </figure>
-          <div class="stage-chips">
-            <span class="float-chip chip-a">{{ c().hero.chips[0] }}</span>
-            <span class="float-chip chip-b">{{ c().hero.chips[1] }}</span>
-            <span class="float-chip chip-c">{{ c().hero.chips[2] }}</span>
-          </div>
+        <div
+          class="glass"
+          role="img"
+          [attr.aria-label]="c().ui.portraitAlt"
+          [style.--img]="'url(' + profile.portrait + ')'"
+        >
+          @for (slice of slices; track $index) {
+            <span
+              class="glass-slice"
+              [style.--l]="slice.l"
+              [style.--w]="slice.w"
+              [style.--h]="slice.h"
+              [style.--s]="slice.s"
+              [style.--z]="slice.z"
+              (pointerenter)="spinSlice($event)"
+              (transitionrun)="onSpinStart($event)"
+              (transitionend)="onSpinEnd($event)"
+            >
+              <span class="slice-img a"></span>
+              <span class="slice-img b"></span>
+              <span class="prism">
+                <i class="face" style="--fi: 0"></i>
+                <i class="face" style="--fi: 1"></i>
+                <i class="face" style="--fi: 2"></i>
+                <i class="face" style="--fi: 3"></i>
+              </span>
+            </span>
+          }
         </div>
+        <ul class="hero-tags">
+          @for (chip of c().hero.chips; track chip) {
+            <li>{{ chip }}</li>
+          }
+        </ul>
       </div>
     </div>
   </section>
@@ -571,6 +592,7 @@
 </main>
 
 <footer class="footer">
+  <p class="wrap footer-mark" aria-hidden="true">Esteban Guevara</p>
   <div class="wrap footer-row">
     <div class="footer-id">
       <p>© {{ year }} {{ profile.name }}</p>

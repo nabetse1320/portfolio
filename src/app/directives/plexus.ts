@@ -66,14 +66,14 @@ export class Plexus {
     let touchPointerId: number | null = null;
     let lastClientX = 0;
     let lastClientY = 0;
-    // Colores "r, g, b" del tema actual (--teal-rgb / --gold-rgb en styles.scss).
-    let teal = '94, 234, 212';
-    let gold = '231, 194, 122';
+    // Colores "r, g, b" del tema actual (--acc-rgb / --acc2-rgb en styles.scss).
+    let teal = '143, 168, 255';
+    let gold = '201, 209, 224';
 
     const readColors = (): void => {
       const style = getComputedStyle(canvas);
-      teal = style.getPropertyValue('--teal-rgb').trim() || teal;
-      gold = style.getPropertyValue('--gold-rgb').trim() || gold;
+      teal = style.getPropertyValue('--acc-rgb').trim() || teal;
+      gold = style.getPropertyValue('--acc2-rgb').trim() || gold;
     };
 
     const resize = (): void => {
@@ -341,8 +341,10 @@ export class Plexus {
       pointer.mouse = true;
     };
 
+    // El lienzo es el fondo fijo de toda la página (sin eventos propios):
+    // el cursor se sigue en la ventana y se suelta al salir de ella.
     const onMouseLeave = (event: PointerEvent): void => {
-      if (event.pointerType !== 'mouse') {
+      if (event.pointerType !== 'mouse' || event.relatedTarget) {
         return;
       }
       pointer.active = false;
@@ -457,8 +459,8 @@ export class Plexus {
     });
     themeObserver.observe(document.documentElement, { attributeFilter: ['data-theme'] });
 
-    host.addEventListener('pointermove', onMouseMove);
-    host.addEventListener('pointerleave', onMouseLeave);
+    window.addEventListener('pointermove', onMouseMove);
+    document.addEventListener('pointerout', onMouseLeave);
     window.addEventListener('pointerdown', onTouchDown);
     window.addEventListener('pointermove', onTouchMove);
     window.addEventListener('pointerrawupdate', onPointerRaw);
@@ -495,8 +497,8 @@ export class Plexus {
       themeObserver.disconnect();
       observer?.disconnect();
       intersection?.disconnect();
-      host.removeEventListener('pointermove', onMouseMove);
-      host.removeEventListener('pointerleave', onMouseLeave);
+      window.removeEventListener('pointermove', onMouseMove);
+      document.removeEventListener('pointerout', onMouseLeave);
       window.removeEventListener('pointerdown', onTouchDown);
       window.removeEventListener('pointermove', onTouchMove);
       window.removeEventListener('pointerrawupdate', onPointerRaw);

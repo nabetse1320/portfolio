@@ -88,7 +88,6 @@ export interface Content {
     sections: string;
     openMenu: string;
     closeMenu: string;
-    status: string;
     switchLang: string;
     switchLangLabel: string;
     themeToLight: string;
@@ -253,7 +252,6 @@ const es: Content = {
     sections: 'Secciones',
     openMenu: 'Abrir menú',
     closeMenu: 'Cerrar menú',
-    status: 'Abierto a roles',
     switchLang: 'EN',
     switchLangLabel: 'View in English',
     themeToLight: 'Cambiar a modo claro',
@@ -490,7 +488,6 @@ const en: Content = {
     sections: 'Sections',
     openMenu: 'Open menu',
     closeMenu: 'Close menu',
-    status: 'Open to roles',
     switchLang: 'ES',
     switchLangLabel: 'Ver en español',
     themeToLight: 'Switch to light mode',
