@@ -685,6 +685,34 @@ h1 .line-alt {
   border-top: 0;
 }
 
+/* Difuminado de la red en una franja central (el ancho del contenido) que va
+   sin cortes desde el final del hero hasta el pie: cada sección y el pie la
+   cubren de arriba abajo, y solo se desvanece hacia los lados, donde los
+   nodos se ven nítidos. */
+.section {
+  position: relative;
+}
+
+.section::before,
+.footer::before {
+  --fade: linear-gradient(to right, transparent, #000 96px, #000 calc(100% - 96px), transparent);
+  content: '';
+  position: absolute;
+  inset: 0 max(0px, calc((100% - 1160px) / 2 - 72px));
+  z-index: -1;
+  background: color-mix(in srgb, var(--bg) 30%, transparent);
+  -webkit-backdrop-filter: blur(7px);
+  backdrop-filter: blur(7px);
+  mask-image: var(--fade);
+  pointer-events: none;
+}
+
+/* Paso suave desde el hero (nítido) a la primera sección. */
+.hero + .section::before {
+  mask-image: var(--fade), linear-gradient(to bottom, transparent, #000 180px);
+  mask-composite: intersect;
+}
+
 .section-head {
   display: grid;
   gap: 12px;
