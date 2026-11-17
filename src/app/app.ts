@@ -12,6 +12,7 @@ import { Preferences } from './preferences';
   imports: [Plexus, Reveal, Spotlight, VideoEmbed, Lightbox],
   templateUrl: './app.html',
   styleUrl: './app.scss',
+  host: { '(click)': 'onAnchorClick($event)' },
 })
 export class App {
   protected readonly prefs = inject(Preferences);
@@ -39,6 +40,11 @@ export class App {
   protected readonly progress = signal(0);
   protected readonly copied = signal(false);
   protected readonly gallery = signal<OpenGallery | null>(null);
+
+  /** Proyectos por id: Experiencia enlaza a su tarjeta en Trabajo. */
+  protected readonly projectsById = computed(
+    () => new Map(this.c().work.projects.map((project) => [project.id, project])),
+  );
 
   private readonly destroyRef = inject(DestroyRef);
   private readonly sectionIds = computed(() => ['inicio', ...this.c().nav.map((item) => item.id)]);
@@ -80,6 +86,28 @@ export class App {
         document.documentElement.classList.remove('menu-lock');
       });
     });
+  }
+
+  /**
+   * Con `<base href="/">`, un enlace `#seccion` apunta a `/#seccion` y pierde el
+   * `?lang=` de la URL: el navegador recarga la página y puede cambiar el idioma.
+   * Cambiar solo el hash conserva la URL y salta sin recargar.
+   */
+  protected onAnchorClick(event: MouseEvent): void {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+      return;
+    }
+    const hash = (event.target as Element).closest('a')?.getAttribute('href');
+    if (!hash?.startsWith('#')) {
+      return;
+    }
+    event.preventDefault();
+    if (window.location.hash === hash) {
+      // Mismo destino otra vez: el hash no cambia, así que el salto se hace a mano.
+      document.getElementById(hash.slice(1))?.scrollIntoView();
+    } else {
+      window.location.hash = hash;
+    }
   }
 
   protected toggleMenu(): void {

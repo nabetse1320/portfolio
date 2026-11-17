@@ -14,7 +14,10 @@ export interface Role {
   /** Logo cuadrado; si falta se muestra `mark` como monograma. */
   logo?: string;
   mark: string;
-  points: string[];
+  /** Una línea: el detalle vive en las tarjetas de Trabajo. */
+  summary: string;
+  /** Ids de los proyectos de Trabajo donde se amplía este cargo. */
+  projects: string[];
   tags: string[];
 }
 
@@ -93,9 +96,9 @@ export interface Content {
     themeToLight: string;
     themeToDark: string;
     write: string;
-    seeWork: string;
     downloadCv: string;
     current: string;
+    detailIn: string;
     technologies: string;
     play: string;
     screensOf: string;
@@ -257,9 +260,9 @@ const es: Content = {
     themeToLight: 'Cambiar a modo claro',
     themeToDark: 'Cambiar a modo oscuro',
     write: 'Escríbeme',
-    seeWork: 'Ver trabajo',
     downloadCv: 'Descargar CV',
     current: 'Actual',
+    detailIn: 'Detalle en Trabajo',
     technologies: 'Tecnologías',
     play: 'Reproducir video de',
     screensOf: 'Capturas de',
@@ -279,7 +282,7 @@ const es: Content = {
   hero: {
     focus: 'Desarrollo móvil y web',
     lead: 'Aplicaciones Android con Kotlin y Jetpack Compose, backends con Laravel y productos multiplataforma con Flutter.',
-    interest: 'Medellín, Rionegro o remoto',
+    interest: 'Disponible en Medellín, Rionegro o remoto',
     chips: ['Kotlin · Compose', 'Laravel', 'App en Google Play'],
   },
   about: {
@@ -289,10 +292,10 @@ const es: Content = {
       'Esa mezcla me hace cuidar las dos caras de un proyecto: que el código sea sólido y que usarlo se sienta bien.',
     ],
     stats: [
-      { value: '1', label: 'App Android publicada en Google Play' },
-      { value: '4', label: 'Videojuegos desarrollados en equipo' },
-      { value: 'Top 6', label: 'Convocatoria nacional Vertical-i / Minciencias' },
-      { value: '2', label: 'Categorías ganadas en GameJam Caribe 2023' },
+      { value: 'Top 6', label: 'Nacional en la convocatoria Vertical-i / Minciencias' },
+      { value: 'En Play', label: 'App Android de Famii publicada en Google Play' },
+      { value: '2 premios', label: 'Arte visual y Narrativa en GameJam Caribe 2023' },
+      { value: '4 juegos', label: 'Desarrollados en equipo con Unity y C#' },
     ],
   },
   experience: {
@@ -307,12 +310,9 @@ const es: Content = {
         current: true,
         logo: 'projects/famii/icon.webp',
         mark: 'F',
-        points: [
-          'Desarrollo de la aplicación móvil Android con Kotlin y Jetpack Compose.',
-          'Implementación y mantenimiento del backend con Laravel (API, lógica de negocio y base de datos).',
-          'Administración y mantenimiento del sitio web corporativo famii.co (contenido, estabilidad y soporte técnico).',
-          'Colaboración en el ciclo completo del producto: desarrollo, pruebas y despliegue de funcionalidades.',
-        ],
+        summary:
+          'App Android con Kotlin y Jetpack Compose, backend en Laravel y mantenimiento de famii.co, del desarrollo al despliegue.',
+        projects: ['famii'],
         tags: ['Kotlin', 'Jetpack Compose', 'Laravel', 'PHP', 'Web'],
       },
       {
@@ -322,10 +322,9 @@ const es: Content = {
         org: 'Bienestar Universitario — Universidad Simón Bolívar',
         current: false,
         mark: 'US',
-        points: [
-          'Apoyo en producción de contenido audiovisual para redes sociales del área de Bienestar Universitario.',
-          'Participación en captura, edición y entrega de piezas comunicativas institucionales.',
-        ],
+        summary:
+          'Captura, edición y entrega de piezas audiovisuales institucionales para las redes sociales de Bienestar Universitario.',
+        projects: [],
         tags: ['Audiovisual', 'Edición', 'Piezas institucionales'],
       },
       {
@@ -336,11 +335,9 @@ const es: Content = {
         current: false,
         logo: 'projects/games/tesoro-thumb.webp',
         mark: 'VJ',
-        points: [
-          'Vertical-i / Minciencias (2023–2024): programación y game design en «El Tesoro del Prejuicio»; equipo ganador de la convocatoria nacional y cofinanciado tras incubación.',
-          'GameJam Caribe 2023: integrante del equipo ganador en las categorías Arte visual y Narrativa.',
-          'Question Quest (2021–2022) y Liquid Maze (2024): programación y game design en Unity/C# como proyectos universitarios (Unisimón).',
-        ],
+        summary:
+          'Programación y game design en Unity y C# en proyectos universitarios, la convocatoria Vertical-i / Minciencias y GameJam Caribe 2023.',
+        projects: ['tesoro', 'question-quest', 'liquid-maze', 'gamejam'],
         tags: ['Unity', 'C#', 'Game design'],
       },
     ],
@@ -493,9 +490,9 @@ const en: Content = {
     themeToLight: 'Switch to light mode',
     themeToDark: 'Switch to dark mode',
     write: 'Get in touch',
-    seeWork: 'See work',
     downloadCv: 'Download CV',
     current: 'Current',
+    detailIn: 'Details under Work',
     technologies: 'Technologies',
     play: 'Play video of',
     screensOf: 'Screenshots of',
@@ -515,7 +512,7 @@ const en: Content = {
   hero: {
     focus: 'Mobile & web development',
     lead: 'Android apps with Kotlin and Jetpack Compose, Laravel backends and cross-platform products with Flutter.',
-    interest: 'Medellín, Rionegro or remote',
+    interest: 'Available in Medellín, Rionegro or remote',
     chips: ['Kotlin · Compose', 'Laravel', 'App on Google Play'],
   },
   about: {
@@ -525,10 +522,10 @@ const en: Content = {
       'That mix makes me care about both sides of a project: solid code, and something that feels good to use.',
     ],
     stats: [
-      { value: '1', label: 'Android app published on Google Play' },
-      { value: '4', label: 'Video games built as part of a team' },
-      { value: 'Top 6', label: 'Vertical-i / Minciencias national call' },
-      { value: '2', label: 'Categories won at GameJam Caribe 2023' },
+      { value: 'Top 6', label: 'Nationwide in the Vertical-i / Minciencias call' },
+      { value: 'On Play', label: 'Famii Android app published on Google Play' },
+      { value: '2 awards', label: 'Visual Art and Narrative at GameJam Caribe 2023' },
+      { value: '4 games', label: 'Built as part of a team with Unity and C#' },
     ],
   },
   experience: {
@@ -543,12 +540,9 @@ const en: Content = {
         current: true,
         logo: 'projects/famii/icon.webp',
         mark: 'F',
-        points: [
-          'Developed the Android mobile app with Kotlin and Jetpack Compose.',
-          'Built and maintained the Laravel backend (API, business logic and database).',
-          'Managed and maintained the corporate website famii.co (content, stability and technical support).',
-          'Worked across the full product cycle: development, testing and feature deployment.',
-        ],
+        summary:
+          'Android app with Kotlin and Jetpack Compose, Laravel backend and upkeep of famii.co, from development to deployment.',
+        projects: ['famii'],
         tags: ['Kotlin', 'Jetpack Compose', 'Laravel', 'PHP', 'Web'],
       },
       {
@@ -558,10 +552,9 @@ const en: Content = {
         org: 'Student Wellbeing Office — Universidad Simón Bolívar',
         current: false,
         mark: 'US',
-        points: [
-          'Supported audiovisual content production for the Student Wellbeing Office’s social media.',
-          'Took part in shooting, editing and delivering institutional communication pieces.',
-        ],
+        summary:
+          'Shooting, editing and delivering institutional audiovisual pieces for the Student Wellbeing Office’s social media.',
+        projects: [],
         tags: ['Audiovisual', 'Editing', 'Institutional content'],
       },
       {
@@ -572,11 +565,9 @@ const en: Content = {
         current: false,
         logo: 'projects/games/tesoro-thumb.webp',
         mark: 'GD',
-        points: [
-          'Vertical-i / Minciencias (2023–2024): programming and game design for “El Tesoro del Prejuicio”; the team won the national call and received co-funding after incubation.',
-          'GameJam Caribe 2023: member of the team that won the Visual Art and Narrative categories.',
-          'Question Quest (2021–2022) and Liquid Maze (2024): programming and game design in Unity/C# as university projects (Unisimón).',
-        ],
+        summary:
+          'Programming and game design in Unity and C# across university projects, the Vertical-i / Minciencias national call and GameJam Caribe 2023.',
+        projects: ['tesoro', 'question-quest', 'liquid-maze', 'gamejam'],
         tags: ['Unity', 'C#', 'Game design'],
       },
     ],

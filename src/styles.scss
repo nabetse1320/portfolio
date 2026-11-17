@@ -410,7 +410,7 @@ main,
 
 h1 {
   margin-top: 20px;
-  font-size: clamp(3rem, 6.2vw, 5.8rem);
+  font-size: clamp(2.8rem, 5vw, 4.6rem);
   font-weight: 600;
   letter-spacing: -0.05em;
   line-height: 0.98;
@@ -438,9 +438,10 @@ h1 .line-alt {
 
 .role-line {
   color: var(--ink);
-  font-size: 1.15rem;
+  font-size: clamp(1.3rem, 2vw, 1.6rem);
   font-weight: 500;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
 }
 
 .lead,
@@ -511,22 +512,23 @@ h1 .line-alt {
   border-color: color-mix(in srgb, var(--ink) 35%, transparent);
 }
 
+/* Disponibilidad: el contacto completo está en la sección Contacto. */
 .hero-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 20px;
-  margin-top: 28px;
-  color: var(--faint);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
+  color: var(--muted);
   font-size: 0.9rem;
 }
 
-.hero-meta a {
-  color: var(--muted);
-  text-decoration: none;
-}
-
-.hero-meta a:hover {
-  color: var(--ink);
+.hero-meta::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #3ecf8e;
+  box-shadow: 0 0 0 3px rgba(62, 207, 142, 0.18);
 }
 
 /* ---------- Retrato en columnas de vidrio ----------
@@ -798,8 +800,15 @@ h2 {
   background: var(--surface);
 }
 
+/* Valores cortos con palabra ("2 premios"): se escalan al ancho de la celda
+   para que siempre quepan en una línea. */
+.stat {
+  container-type: inline-size;
+}
+
 .stat-value {
-  font-size: clamp(2.4rem, 3.8vw, 3.1rem);
+  font-size: min(2.8rem, 17cqi);
+  white-space: nowrap;
   font-weight: 600;
   letter-spacing: -0.05em;
   line-height: 1;
@@ -904,6 +913,34 @@ h2 {
   font-size: 0.95rem;
 }
 
+/* Una línea por cargo: el detalle está en las tarjetas de Trabajo. */
+.job-summary {
+  max-width: 46rem;
+  margin-top: 16px;
+  color: var(--muted);
+}
+
+.job-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 18px;
+  margin-top: 12px;
+}
+
+.job-links-label {
+  color: var(--faint);
+  font-size: 0.88rem;
+}
+
+.job-links .project-link {
+  min-height: 44px;
+}
+
+.job-links .project-link:hover .icon:last-child {
+  transform: translateY(2px);
+}
+
 .points {
   display: grid;
   gap: 8px;
@@ -948,13 +985,16 @@ h2 {
 
 /* Proyectos */
 
+/* Seis pistas: las tarjetas con video van de tres en fila; la destacada y la
+   que no tiene medios ocupan la fila entera. */
 .bento {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 16px;
 }
 
 .project {
+  grid-column: span 2;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -982,6 +1022,39 @@ h2 {
   flex-direction: column;
   gap: 12px;
   padding: 26px;
+}
+
+/* Cabecera y texto son grupos solo para la variante sin medios; en las demás
+   tarjetas sus hijos siguen siendo ítems directos de la columna. */
+.project-head,
+.project-text {
+  display: contents;
+}
+
+/* Destino de un enlace desde Experiencia. */
+.project:target {
+  border-color: var(--acc);
+}
+
+/* Sin video ni capturas: fila compacta a todo el ancho, cabecera a la
+   izquierda y texto a la derecha, en vez de una tarjeta medio vacía. */
+.project.no-media {
+  grid-column: 1 / -1;
+  min-height: 0;
+}
+
+.project.no-media .project-body {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  gap: 16px 40px;
+  align-items: center;
+}
+
+.project.no-media .project-head,
+.project.no-media .project-text {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .project.featured {
@@ -1151,6 +1224,11 @@ h2 {
 }
 
 .project h3 {
+  font-size: clamp(1.35rem, 2vw, 1.65rem);
+  line-height: 1.12;
+}
+
+.project.featured h3 {
   font-size: clamp(1.6rem, 2.6vw, 2.2rem);
   line-height: 1.08;
 }
@@ -1958,7 +2036,12 @@ h2 {
     mask-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6));
   }
 
-  .project.featured {
+  .project {
+    grid-column: 1 / -1;
+  }
+
+  .project.featured,
+  .project.no-media .project-body {
     grid-template-columns: 1fr;
   }
 
@@ -2019,11 +2102,6 @@ h2 {
 
   h1 {
     font-size: clamp(2.6rem, 12vw, 3.4rem);
-  }
-
-  .hero-meta {
-    display: grid;
-    gap: 4px;
   }
 
   .actions .btn {

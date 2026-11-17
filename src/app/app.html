@@ -25,7 +25,8 @@
         [attr.aria-current]="active() === item.id ? 'location' : null"
         (click)="closeMenu()"
       >
-        <span class="nav-num" aria-hidden="true">0{{ n + 1 }}</span>{{ item.label }}
+        <span class="nav-num" aria-hidden="true">0{{ n + 1 }}</span
+        >{{ item.label }}
       </a>
     }
   </nav>
@@ -135,17 +136,8 @@
             </svg>
             {{ c().ui.downloadCv }}
           </a>
-          <a class="btn btn-ghost" href="#trabajo">{{ c().ui.seeWork }}</a>
         </div>
-        <ul class="hero-meta rise d5">
-          <li>
-            <a [href]="profile.emailHref">{{ profile.email }}</a>
-          </li>
-          <li>
-            <a [href]="profile.phoneHref">{{ profile.phone }}</a>
-          </li>
-          <li>{{ c().hero.interest }}</li>
-        </ul>
+        <p class="hero-meta rise d5">{{ c().hero.interest }}</p>
       </div>
 
       <div class="hero-visual rise d4">
@@ -246,16 +238,34 @@
                   <p class="org">{{ role.org }}</p>
                 </div>
               </div>
-              <ul class="points">
-                @for (point of role.points; track point) {
-                  <li>{{ point }}</li>
-                }
-              </ul>
+              <p class="job-summary">{{ role.summary }}</p>
               <ul class="tags" [attr.aria-label]="c().ui.technologies">
                 @for (tag of role.tags; track tag) {
                   <li>{{ tag }}</li>
                 }
               </ul>
+              @if (role.projects.length) {
+                <div class="job-links">
+                  <span class="job-links-label">{{ c().ui.detailIn }}</span>
+                  @for (id of role.projects; track id) {
+                    @if (projectsById().get(id); as project) {
+                      <a class="project-link" [href]="'#proyecto-' + id">
+                        {{ project.name }}
+                        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                          <path
+                            d="M12 5v14M6 13l6 6 6-6"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                        </svg>
+                      </a>
+                    }
+                  }
+                </div>
+              }
             </article>
           </li>
         }
@@ -274,7 +284,9 @@
         @for (project of c().work.projects; track project.id; let i = $index) {
           <article
             class="project tone-{{ project.tone }}"
+            [id]="'proyecto-' + project.id"
             [class.featured]="project.featured"
+            [class.no-media]="!project.video && !project.screens"
             appReveal
             appSpotlight
             [attr.data-delay]="i % 3"
@@ -307,41 +319,56 @@
               </ul>
             }
             <div class="project-body">
-              <div class="project-top">
-                <p class="kicker">{{ project.kicker }}</p>
-                <p class="when">{{ project.period }}</p>
+              <div class="project-head">
+                <div class="project-top">
+                  <p class="kicker">{{ project.kicker }}</p>
+                  <p class="when">{{ project.period }}</p>
+                </div>
+                @if (project.badge) {
+                  <p class="badge">{{ project.badge }}</p>
+                }
+                <h3>{{ project.name }}</h3>
               </div>
-              @if (project.badge) {
-                <p class="badge">{{ project.badge }}</p>
-              }
-              <h3>{{ project.name }}</h3>
-              <p>{{ project.summary }}</p>
-              @if (project.points.length) {
-                <ul class="points">
-                  @for (point of project.points; track point) {
-                    <li>{{ point }}</li>
-                  }
-                </ul>
-              }
-              <div class="project-foot">
-                <ul class="tags">
-                  @for (tag of project.tags; track tag) {
-                    <li>{{ tag }}</li>
-                  }
-                </ul>
-                @if (project.links.length) {
-                  <div class="project-links">
-                    @for (link of project.links; track link.href) {
-                      <a
-                        class="project-link"
-                        [href]="link.href"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        @if (link.kind === 'code') {
+              <div class="project-text">
+                <p>{{ project.summary }}</p>
+                @if (project.points.length) {
+                  <ul class="points">
+                    @for (point of project.points; track point) {
+                      <li>{{ point }}</li>
+                    }
+                  </ul>
+                }
+                <div class="project-foot">
+                  <ul class="tags">
+                    @for (tag of project.tags; track tag) {
+                      <li>{{ tag }}</li>
+                    }
+                  </ul>
+                  @if (project.links.length) {
+                    <div class="project-links">
+                      @for (link of project.links; track link.href) {
+                        <a
+                          class="project-link"
+                          [href]="link.href"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          @if (link.kind === 'code') {
+                            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                              <path
+                                d="m8 7-5 5 5 5M16 7l5 5-5 5"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                              />
+                            </svg>
+                          }
+                          {{ link.label }}
                           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
                             <path
-                              d="m8 7-5 5 5 5M16 7l5 5-5 5"
+                              d="M7 17 17 7M9 7h8v8"
                               fill="none"
                               stroke="currentColor"
                               stroke-width="1.8"
@@ -349,22 +376,11 @@
                               stroke-linejoin="round"
                             />
                           </svg>
-                        }
-                        {{ link.label }}
-                        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                          <path
-                            d="M7 17 17 7M9 7h8v8"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.8"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                        </svg>
-                      </a>
-                    }
-                  </div>
-                }
+                        </a>
+                      }
+                    </div>
+                  }
+                </div>
               </div>
             </div>
           </article>
